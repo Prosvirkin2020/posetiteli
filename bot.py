@@ -19,10 +19,33 @@ API_TOKEN = os.getenv("BOT_TOKEN")
 GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
-# Check for credentials in Render secrets or local folder
-RENDER_SECRET_PATH = "/etc/secrets/credentials.json"
-LOCAL_SECRET_PATH = "credentials.json"
-GOOGLE_CREDENTIALS_FILE = RENDER_SECRET_PATH if os.path.exists(RENDER_SECRET_PATH) else LOCAL_SECRET_PATH
+import json
+
+# Constants
+API_TOKEN = os.getenv("BOT_TOKEN")
+GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
+ADMIN_ID = os.getenv("ADMIN_ID")
+
+# Create credentials from environment variables
+creds_json = {
+  "type": "service_account",
+  "project_id": os.getenv("GCP_PROJECT_ID"),
+  "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
+  "private_key": os.getenv("GCP_PRIVATE_KEY").replace('\\n', '\n'),
+  "client_email": os.getenv("GCP_CLIENT_EMAIL"),
+  "client_id": os.getenv("GCP_CLIENT_ID"),
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": os.getenv("GCP_CLIENT_X509_CERT_URL"),
+  "universe_domain": "googleapis.com"
+}
+
+# Write credentials to a temporary file
+with open("temp_credentials.json", "w") as f:
+    json.dump(creds_json, f)
+
+GOOGLE_CREDENTIALS_FILE = "temp_credentials.json"
 
 # Bot and Dispatcher
 bot = Bot(token=API_TOKEN)
