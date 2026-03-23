@@ -7,12 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class GoogleSheetsStorage:
-    def __init__(self, credentials_data, spreadsheet_id):
+    def __init__(self, credentials_file, spreadsheet_id):
         self.scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        if isinstance(credentials_data, dict):
-            self.creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_data, self.scope)
-        else:
-            self.creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_data, self.scope)
+        self.creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_file, self.scope)
         self.client = gspread.authorize(self.creds)
         self.spreadsheet = self.client.open_by_key(spreadsheet_id)
         self._initialize_sheets()

@@ -31,27 +31,17 @@ API_TOKEN = os.getenv("BOT_TOKEN")
 GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
-# Create credentials from a single environment variable
-gcp_json_raw = os.getenv("GCP_JSON")
-if gcp_json_raw:
-    try:
-        # Load JSON and fix private key newlines
-        creds_dict = json.loads(gcp_json_raw)
-        if 'private_key' in creds_dict:
-            creds_dict['private_key'] = creds_dict['private_key'].replace('\\n', '\n')
-        GOOGLE_CREDENTIALS_DATA = creds_dict
-    except Exception as e:
-        print(f"Ошибка при чтении GCP_JSON: {e}")
-        GOOGLE_CREDENTIALS_DATA = "credentials.json"
-else:
-    GOOGLE_CREDENTIALS_DATA = "credentials.json"
+# Пути к файлу ключа (Render Secrets или локально)
+RENDER_PATH = "/etc/secrets/credentials.json"
+LOCAL_PATH = "credentials.json"
+GOOGLE_CREDENTIALS_FILE = RENDER_PATH if os.path.exists(RENDER_PATH) else LOCAL_PATH
 
 # Bot and Dispatcher
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
 # Storage client
-storage = GoogleSheetsStorage(GOOGLE_CREDENTIALS_DATA, GOOGLE_SHEET_ID)
+storage = GoogleSheetsStorage(GOOGLE_CREDENTIALS_FILE, GOOGLE_SHEET_ID)
 
 # States
 class Registration(StatesGroup):
