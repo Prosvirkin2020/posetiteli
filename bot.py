@@ -17,8 +17,12 @@ load_dotenv()
 # Constants
 API_TOKEN = os.getenv("BOT_TOKEN")
 GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID")
-GOOGLE_CREDENTIALS_FILE = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
 ADMIN_ID = os.getenv("ADMIN_ID")
+
+# Check for credentials in Render secrets or local folder
+RENDER_SECRET_PATH = "/etc/secrets/credentials.json"
+LOCAL_SECRET_PATH = "credentials.json"
+GOOGLE_CREDENTIALS_FILE = RENDER_SECRET_PATH if os.path.exists(RENDER_SECRET_PATH) else LOCAL_SECRET_PATH
 
 # Bot and Dispatcher
 bot = Bot(token=API_TOKEN)
